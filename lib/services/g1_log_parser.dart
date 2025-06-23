@@ -3,7 +3,8 @@ import '../models/g1_device.dart';
 
 class G1LogParser {
   static final RegExp _boxBatteryRegex = RegExp(r'box bat: (\d+) mV, (\d+)%');
-  static final RegExp _batteryDataRegex = RegExp(r'Get data:(\w{2}) (\w{2}) (\w{2}) (\w{2}), Rx VRECT: (\d+)mV, Battery Level: (\d+)%, curFlg:(\d+),current:(\d+)');
+  static final RegExp _nfc0DataRegex = RegExp(r'NFC0: \[\d+\] Get data:(\w{2}) (\w{2}) (\w{2}) (\w{2}), Rx VRECT: (\d+)mV, Battery Level: (\d+)%, curFlg:(\d+),current:(\d+)');
+  static final RegExp _nfc1DataRegex = RegExp(r'NFC1: \[\d+\] Get data:(\w{2}) (\w{2}) (\w{2}) (\w{2}), Rx VRECT: (\d+)mV, Battery Level: (\d+)%, curFlg:(\d+),current:(\d+)');
   static final RegExp _nfcTempRegex = RegExp(r'NFC IC0:(\d+), NFC IC1:(\d+), Bat:(\d+)');
   static final RegExp _usbLidRegex = RegExp(r'usb:(\d+), lid:(\d+),\s+charge:(\d+)');
   static final RegExp _timestampRegex = RegExp(r'NFC[01]:\[(\d+)\]');
@@ -23,13 +24,23 @@ class G1LogParser {
       );
     }
 
-    // Parse detailed battery data from glasses
-    final batteryDataMatch = _batteryDataRegex.firstMatch(line);
-    if (batteryDataMatch != null) {
+    // Parse NFC0 (Right glass) charging data
+    final nfc0DataMatch = _nfc0DataRegex.firstMatch(line);
+    if (nfc0DataMatch != null) {
       return updatedDevice.copyWith(
-        vrectVoltage: int.parse(batteryDataMatch.group(5)!),
-        chargingCurrent: int.parse(batteryDataMatch.group(8)!),
-        isCharging: batteryDataMatch.group(7) == '1',
+        rightVrectVoltage: int.parse(nfc0DataMatch.group(5)!),
+        rightChargingCurrent: int.parse(nfc0DataMatch.group(8)!),
+        rightIsCharging: nfc0DataMatch.group(7) == '1',
+      );
+    }
+
+    // Parse NFC1 (Left glass) charging data
+    final nfc1DataMatch = _nfc1DataRegex.firstMatch(line);
+    if (nfc1DataMatch != null) {
+      return updatedDevice.copyWith(
+        leftVrectVoltage: int.parse(nfc1DataMatch.group(5)!),
+        leftChargingCurrent: int.parse(nfc1DataMatch.group(8)!),
+        leftIsCharging: nfc1DataMatch.group(7) == '1',
       );
     }
 
@@ -43,12 +54,14 @@ class G1LogParser {
       );
     }
 
-    // Parse USB and lid status
+    // Parse USB and lid status, and infer case charging
     final usbLidMatch = _usbLidRegex.firstMatch(line);
     if (usbLidMatch != null) {
+      final chargeStatus = int.parse(usbLidMatch.group(3)!);
       return updatedDevice.copyWith(
         usbConnected: usbLidMatch.group(1) == '01',
         lidClosed: usbLidMatch.group(2) == '01',
+        caseIsCharging: chargeStatus > 0, // charge:02 or charge:03 indicates charging
       );
     }
 
@@ -88,7 +101,8 @@ class G1LogParser {
     // Extract all numeric values and their context
     final patterns = {
       'box_battery_voltage': _boxBatteryRegex,
-      'battery_data': _batteryDataRegex,
+      'nfc0_data': _nfc0DataRegex,
+      'nfc1_data': _nfc1DataRegex,
       'nfc_temps': _nfcTempRegex,
       'usb_lid_status': _usbLidRegex,
       'battery_levels': _batteryLevelRegex,

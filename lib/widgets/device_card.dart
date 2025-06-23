@@ -32,8 +32,6 @@ class DeviceCard extends StatelessWidget {
               _buildChargingSection(),
               const SizedBox(height: 16),
               _buildStatusSection(),
-              const SizedBox(height: 16),
-              _buildTemperatureSection(),
             ] else ...[
               _buildDisconnectedState(),
             ],
@@ -151,13 +149,6 @@ class DeviceCard extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-        ],
-        if (device.caseBatteryVoltage != null) ...[
-          const SizedBox(height: 8),
-          Text(
-            'Case Voltage: ${device.caseBatteryVoltage} mV',
-            style: const TextStyle(fontSize: 12, color: Colors.grey),
           ),
         ],
       ],
@@ -283,22 +274,99 @@ class DeviceCard extends StatelessWidget {
         const SizedBox(height: 8),
         Row(
           children: [
-            Expanded(
-              child: _buildInfoTile('VRECT', '${device.vrectVoltage ?? 0} mV', Icons.electrical_services),
-            ),
-            Expanded(
-              child: _buildInfoTile('Current', '${device.chargingCurrent ?? 0} mA', Icons.flash_on),
-            ),
-            Expanded(
-              child: _buildInfoTile(
-                'Status',
-                device.isCharging == true ? 'Charging' : 'Not Charging',
-                device.isCharging == true ? Icons.battery_charging_full : Icons.battery_std,
-              ),
-            ),
+            Expanded(child: _buildChargingTile('Case', device.caseIsCharging, device.caseVrectVoltage, device.caseChargingCurrent, device.batteryTemp)),
+            Expanded(child: _buildChargingTile('Left', device.leftIsCharging, device.leftVrectVoltage, device.leftChargingCurrent, device.nfcTemp1)),
+            Expanded(child: _buildChargingTile('Right', device.rightIsCharging, device.rightVrectVoltage, device.rightChargingCurrent, device.nfcTemp0)),
           ],
         ),
       ],
+    );
+  }
+
+  Widget _buildChargingTile(String label, bool? isCharging, int? vrectVoltage, int? chargingCurrent, int? temperature) {
+    // If we have no current data (mA), we're definitely not charging
+    final bool charging = (chargingCurrent != null && chargingCurrent > 0) && isCharging == true;
+    // For case, also consider caseBatteryVoltage as data
+    // For glasses, temperature data means we have NFC communication, so show 'Not Charging' instead of 'Unknown'
+    final bool hasData = isCharging != null || vrectVoltage != null || chargingCurrent != null || 
+                        (label == 'Case' && device.caseBatteryVoltage != null) ||
+                        (label != 'Case' && temperature != null);
+    final String status = hasData ? (charging ? 'Charging' : 'Not Charging') : 'Unknown';
+    final String voltage = vrectVoltage != null ? '${vrectVoltage}mV' : '--';
+    final String current = chargingCurrent != null ? '${chargingCurrent}mA' : '--';
+    final String temp = temperature != null ? '${temperature}°C' : '--';
+    
+    // For case, show case battery voltage instead of VRECT
+    final String displayVoltage = label == 'Case' && device.caseBatteryVoltage != null 
+        ? '${device.caseBatteryVoltage}mV' 
+        : voltage;
+    
+    // Determine if we should show voltage - for case check caseBatteryVoltage, for glasses check vrectVoltage > 0
+    final bool hasVoltage = label == 'Case' 
+        ? device.caseBatteryVoltage != null 
+        : (vrectVoltage != null && vrectVoltage > 0);
+    
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      padding: const EdgeInsets.all(12),
+      height: 140, // Fixed height for consistency
+      decoration: BoxDecoration(
+        color: !hasData ? Colors.orange[50] : (charging ? Colors.green[50] : Colors.grey[100]),
+        borderRadius: BorderRadius.circular(8),
+        border: !hasData ? Border.all(color: Colors.orange[200]!) : (charging ? Border.all(color: Colors.green[200]!) : null),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            children: [
+              Icon(
+                !hasData ? Icons.help_outline : (charging ? Icons.battery_charging_full : Icons.battery_std),
+                size: 20,
+                color: !hasData ? Colors.orange[600] : (charging ? Colors.green : Colors.grey[600]),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: const TextStyle(fontSize: 10, color: Colors.grey),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                status,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: !hasData ? Colors.orange[700] : (charging ? Colors.green[700] : Colors.grey[700]),
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+          Column(
+            children: [
+              Text(
+                temp,
+                style: TextStyle(
+                  fontSize: 8, 
+                  color: !hasData ? Colors.orange[600] : (charging ? Colors.green[600] : Colors.grey[600]),
+                ),
+                textAlign: TextAlign.center,
+              ),
+              // Always reserve space for voltage and current
+              Text(
+                hasVoltage ? displayVoltage : '',
+                style: TextStyle(fontSize: 8, color: charging ? Colors.green[600] : Colors.grey[600]),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                charging ? current : '',
+                style: TextStyle(fontSize: 8, color: Colors.green[600]),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -326,31 +394,6 @@ class DeviceCard extends StatelessWidget {
     );
   }
 
-  Widget _buildTemperatureSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Temperature Readings',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: _buildInfoTile('NFC IC0', '${device.nfcTemp0 ?? 0}°C', Icons.thermostat),
-            ),
-            Expanded(
-              child: _buildInfoTile('NFC IC1', '${device.nfcTemp1 ?? 0}°C', Icons.thermostat),
-            ),
-            Expanded(
-              child: _buildInfoTile('Battery', '${device.batteryTemp ?? 0}°C', Icons.battery_alert),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
 
   Widget _buildInfoTile(String label, String value, IconData icon) {
     return Container(

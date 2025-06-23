@@ -12,9 +12,20 @@ class G1Device {
   int? rightGlassBattery;
   
   // Charging information
-  int? vrectVoltage; // mV
-  int? chargingCurrent; // mA
-  bool? isCharging;
+  // Case charging
+  int? caseVrectVoltage; // mV
+  int? caseChargingCurrent; // mA
+  bool? caseIsCharging;
+  
+  // Left glass charging
+  int? leftVrectVoltage; // mV
+  int? leftChargingCurrent; // mA
+  bool? leftIsCharging;
+  
+  // Right glass charging
+  int? rightVrectVoltage; // mV
+  int? rightChargingCurrent; // mA
+  bool? rightIsCharging;
   
   // Hardware status
   bool? usbConnected;
@@ -37,9 +48,15 @@ class G1Device {
     this.caseBatteryPercentage,
     this.leftGlassBattery,
     this.rightGlassBattery,
-    this.vrectVoltage,
-    this.chargingCurrent,
-    this.isCharging,
+    this.caseVrectVoltage,
+    this.caseChargingCurrent,
+    this.caseIsCharging,
+    this.leftVrectVoltage,
+    this.leftChargingCurrent,
+    this.leftIsCharging,
+    this.rightVrectVoltage,
+    this.rightChargingCurrent,
+    this.rightIsCharging,
     this.usbConnected,
     this.lidClosed,
     this.nfcTemp0,
@@ -59,9 +76,15 @@ class G1Device {
     int? caseBatteryPercentage,
     int? leftGlassBattery,
     int? rightGlassBattery,
-    int? vrectVoltage,
-    int? chargingCurrent,
-    bool? isCharging,
+    int? caseVrectVoltage,
+    int? caseChargingCurrent,
+    bool? caseIsCharging,
+    int? leftVrectVoltage,
+    int? leftChargingCurrent,
+    bool? leftIsCharging,
+    int? rightVrectVoltage,
+    int? rightChargingCurrent,
+    bool? rightIsCharging,
     bool? usbConnected,
     bool? lidClosed,
     int? nfcTemp0,
@@ -80,9 +103,15 @@ class G1Device {
       caseBatteryPercentage: caseBatteryPercentage ?? this.caseBatteryPercentage,
       leftGlassBattery: leftGlassBattery ?? this.leftGlassBattery,
       rightGlassBattery: rightGlassBattery ?? this.rightGlassBattery,
-      vrectVoltage: vrectVoltage ?? this.vrectVoltage,
-      chargingCurrent: chargingCurrent ?? this.chargingCurrent,
-      isCharging: isCharging ?? this.isCharging,
+      caseVrectVoltage: caseVrectVoltage ?? this.caseVrectVoltage,
+      caseChargingCurrent: caseChargingCurrent ?? this.caseChargingCurrent,
+      caseIsCharging: caseIsCharging ?? this.caseIsCharging,
+      leftVrectVoltage: leftVrectVoltage ?? this.leftVrectVoltage,
+      leftChargingCurrent: leftChargingCurrent ?? this.leftChargingCurrent,
+      leftIsCharging: leftIsCharging ?? this.leftIsCharging,
+      rightVrectVoltage: rightVrectVoltage ?? this.rightVrectVoltage,
+      rightChargingCurrent: rightChargingCurrent ?? this.rightChargingCurrent,
+      rightIsCharging: rightIsCharging ?? this.rightIsCharging,
       usbConnected: usbConnected ?? this.usbConnected,
       lidClosed: lidClosed ?? this.lidClosed,
       nfcTemp0: nfcTemp0 ?? this.nfcTemp0,
