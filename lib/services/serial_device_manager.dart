@@ -7,7 +7,6 @@ import 'g1_log_parser.dart';
 
 class SerialDeviceManager {
   static const int _baudRate = 115200;
-  static const Duration _scanInterval = Duration(seconds: 5);
   static const Duration _reconnectDelay = Duration(seconds: 3);
 
   final Map<String, G1Device> _devices = {};
@@ -23,14 +22,12 @@ class SerialDeviceManager {
   Stream<G1Device> get deviceUpdateStream => _deviceUpdateController.stream;
   List<G1Device> get devices => _devices.values.toList();
 
-  void startScanning() {
-    _scanForDevices();
-    _scanTimer = Timer.periodic(_scanInterval, (_) => _scanForDevices());
+  Future<void> scanOnce() async {
+    await _scanForDevices();
   }
 
-  void stopScanning() {
-    _scanTimer?.cancel();
-    _scanTimer = null;
+  void startInitialScan() {
+    _scanForDevices();
   }
 
   Future<void> _scanForDevices() async {
@@ -233,7 +230,8 @@ class SerialDeviceManager {
   }
 
   void dispose() {
-    stopScanning();
+    _scanTimer?.cancel();
+    _scanTimer = null;
     
     for (final subscription in _subscriptions.values) {
       subscription.cancel();

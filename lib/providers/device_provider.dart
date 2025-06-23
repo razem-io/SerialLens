@@ -5,10 +5,8 @@ import '../services/serial_device_manager.dart';
 class DeviceProvider extends ChangeNotifier {
   final SerialDeviceManager _deviceManager = SerialDeviceManager();
   List<G1Device> _devices = [];
-  bool _isScanning = false;
 
   List<G1Device> get devices => _devices;
-  bool get isScanning => _isScanning;
   int get connectedDeviceCount => _devices.where((d) => d.isConnected).length;
   int get totalDeviceCount => _devices.length;
 
@@ -27,20 +25,12 @@ class DeviceProvider extends ChangeNotifier {
     });
   }
 
-  void startScanning() {
-    if (!_isScanning) {
-      _isScanning = true;
-      _deviceManager.startScanning();
-      notifyListeners();
-    }
+  void startInitialScan() {
+    _deviceManager.startInitialScan();
   }
 
-  void stopScanning() {
-    if (_isScanning) {
-      _isScanning = false;
-      _deviceManager.stopScanning();
-      notifyListeners();
-    }
+  Future<void> scanOnce() async {
+    await _deviceManager.scanOnce();
   }
 
   Future<void> reconnectDevice(String deviceId) async {

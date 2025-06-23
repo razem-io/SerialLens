@@ -15,9 +15,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Start scanning for devices when the app launches
+    // Perform initial scan when the app launches
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<DeviceProvider>().startScanning();
+      context.read<DeviceProvider>().startInitialScan();
     });
   }
 
@@ -39,23 +39,12 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         actions: [
-          Consumer<DeviceProvider>(
-            builder: (context, provider, child) {
-              return IconButton(
-                onPressed: () {
-                  if (provider.isScanning) {
-                    provider.stopScanning();
-                  } else {
-                    provider.startScanning();
-                  }
-                },
-                icon: Icon(
-                  provider.isScanning ? Icons.stop : Icons.search,
-                  color: provider.isScanning ? Colors.red : null,
-                ),
-                tooltip: provider.isScanning ? 'Stop Scanning' : 'Start Scanning',
-              );
+          IconButton(
+            onPressed: () {
+              context.read<DeviceProvider>().scanOnce();
             },
+            icon: const Icon(Icons.refresh),
+            tooltip: 'Scan for Devices',
           ),
           PopupMenuButton<String>(
             onSelected: (value) {
@@ -92,76 +81,48 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Consumer<DeviceProvider>(
         builder: (context, provider, child) {
           if (provider.devices.isEmpty) {
-            return _buildEmptyState(provider.isScanning);
+            return _buildEmptyState(false);
           }
 
           return RefreshIndicator(
             onRefresh: () async {
-              provider.stopScanning();
-              await Future.delayed(const Duration(milliseconds: 500));
-              provider.startScanning();
+              await provider.scanOnce();
             },
             child: _buildDeviceList(provider.devices),
-          );
-        },
-      ),
-      floatingActionButton: Consumer<DeviceProvider>(
-        builder: (context, provider, child) {
-          return FloatingActionButton.extended(
-            onPressed: () {
-              if (provider.isScanning) {
-                provider.stopScanning();
-              } else {
-                provider.startScanning();
-              }
-            },
-            icon: Icon(
-              provider.isScanning ? Icons.stop : Icons.search,
-            ),
-            label: Text(
-              provider.isScanning ? 'Stop Scan' : 'Scan Devices',
-            ),
-            backgroundColor: provider.isScanning ? Colors.red : null,
           );
         },
       ),
     );
   }
 
-  Widget _buildEmptyState(bool isScanning) {
+  Widget _buildEmptyState(bool _) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            isScanning ? Icons.search : Icons.smart_display_outlined,
+            Icons.smart_display_outlined,
             size: 80,
             color: Colors.grey[400],
           ),
           const SizedBox(height: 24),
-          Text(
-            isScanning ? 'Scanning for G1 Glasses...' : 'No G1 Glasses Found',
-            style: const TextStyle(
+          const Text(
+            'No G1 Glasses Found',
+            style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w500,
               color: Colors.grey,
             ),
           ),
           const SizedBox(height: 16),
-          Text(
-            isScanning
-                ? 'Please make sure your G1 glasses are connected via USB'
-                : 'Tap the scan button to search for connected devices',
-            style: const TextStyle(
+          const Text(
+            'Tap the refresh button to search for connected devices',
+            style: TextStyle(
               fontSize: 14,
               color: Colors.grey,
             ),
             textAlign: TextAlign.center,
           ),
-          if (isScanning) ...[
-            const SizedBox(height: 24),
-            const CircularProgressIndicator(),
-          ],
         ],
       ),
     );
@@ -285,9 +246,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  @override
-  void dispose() {
-    context.read<DeviceProvider>().stopScanning();
-    super.dispose();
-  }
 }
