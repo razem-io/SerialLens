@@ -1,0 +1,128 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# iOS/macOS
+**/ios/**/Flutter/flutter_assets/
+**/ios/**/Flutter/Flutter.framework/
+**/ios/**/Flutter/Flutter.podspec
+**/ios/**/Flutter/Generated.xcconfig
+**/ios/**/Flutter/ephemeral/
+**/ios/**/Flutter/app.flx
+**/ios/**/Flutter/app.zip
+**/ios/**/Flutter/flutter_export_environment.sh
+**/ios/.symlinks/
+**/macos/**/Flutter/Flutter-Generated.xcconfig
+**/macos/**/Flutter/ephemeral/
+**/macos/**/Pods/
+**/macos/.symlinks/
+
+# Linux
+**/linux/**/flutter/ephemeral/
+
+# Windows
+**/windows/**/flutter/ephemeral/
+**/windows/flutter/
+
+# Web
+/web/
+
+# Coverage
+coverage/
+
+# SerialLens specific
+# Keep log examples but ignore generated logs
+**/logs/
+**/*.log
+!log-g1-example.txt
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# macOS specific
+.AppleDouble
+.LSOverride
+Icon?
+._*
+
+# Windows specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux specific
+*~
+.fuse_hidden*
+.nfs*
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Certificates and keys
+*.pem
+*.key
+*.crt
+*.p12
+*.keystore
+
+# Local database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+
+# Memory files
+CLAUDE.md
