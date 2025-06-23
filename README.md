@@ -9,6 +9,9 @@ A cross-platform Flutter application for monitoring multiple Even Realities G1 s
 [![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-ALPHA-red?style=for-the-badge)](https://github.com/yourusername/SerialLens)
+
+> **⚠️ ALPHA SOFTWARE** - This application is currently in early development. Only tested on macOS with G1 glasses. Use at your own risk.
 
 </div>
 
@@ -74,15 +77,68 @@ A cross-platform Flutter application for monitoring multiple Even Realities G1 s
 
 4. **Run the application**:
    ```bash
-   # macOS
+   # macOS (tested)
    flutter run -d macos
    
-   # Windows
+   # Windows (experimental)
    flutter run -d windows
    
-   # Linux
+   # Linux (experimental)
    flutter run -d linux
    ```
+
+## 🔍 Manual Testing (Without App)
+
+Before using SerialLens, you can manually verify your G1 glasses are sending data:
+
+### Monitor G1 Data in Terminal
+
+```bash
+# macOS/Linux - Use screen to monitor live data
+screen /dev/tty.usbserial-110 115200
+
+# You should see live output like:
+# box bat: 4250 mV, 90%
+# NFC1:[3254900] Get data:01 02 30 63, Rx VRECT: 560mV, Battery Level: 99%
+# usb:01, lid:01, charge:02
+# NFC IC0:30, NFC IC1:32, Bat:27
+# !!!!!!!!!!! PB4 LOW !!!!!!!!!!
+
+# To exit screen:
+# Ctrl+A, Ctrl+D = Detach (keeps session running)
+# Ctrl+A, \ = Kill session immediately (like Ctrl+C)
+# Ctrl+A, K, Y = Kill session with confirmation
+
+# Alternative: minicom (if available)
+minicom -D /dev/tty.usbserial-110 -b 115200
+
+# Windows - Use PuTTY or similar terminal emulator
+# Configure: Serial, COM3 (or your port), 115200 baud, 8-N-1
+```
+
+**Screen Command Quick Reference:**
+- **Ctrl+A, Ctrl+D**: Detach from session (keeps it running)
+- **Ctrl+A, K, Y**: Kill session with confirmation
+- **screen -r**: Reattach to a detached session
+- **screen -list**: List all screen sessions
+
+### Verify G1 Hardware Connection
+
+```bash
+# Check if device is recognized by system
+# macOS
+system_profiler SPUSBDataType | grep -i "1a86\|serial"
+
+# Linux
+lsusb | grep -i "1a86\|ch34"
+dmesg | grep -i "ch34\|1a86" | tail -5
+
+# Check port permissions
+ls -la /dev/tty.usbserial-*
+# Should show: crw-rw-rw- (readable/writable by all)
+```
+
+If you see data flowing in the terminal, SerialLens should work perfectly!
 
 ## 🐛 Troubleshooting
 
@@ -91,49 +147,23 @@ A cross-platform Flutter application for monitoring multiple Even Realities G1 s
 <details>
 <summary>Click to expand troubleshooting steps</summary>
 
-1. **Check USB Connection**:
+1. **Test Manual Connection**:
    ```bash
-   # macOS
-   ls -la /dev/*usbserial*
-   
-   # Linux
-   ls -la /dev/ttyUSB* /dev/ttyACM*
-   
-   # Windows
-   mode
-   ```
-
-2. **Test Manual Connection**:
-   ```bash
-   # macOS/Linux
+   # macOS/Linux - Test with screen command
    screen /dev/tty.usbserial-110 115200
-   # Exit with Ctrl+A, then K
+   # Exit: Ctrl+A, \ (immediate kill) or Ctrl+A, Ctrl+D (detach)
+   # If you see G1 data flowing, the app should work!
    ```
 
-3. **Check Permissions** (macOS/Linux):
+2. **Check Permissions** (Linux):
    ```bash
-   # Add user to dialout group (Linux)
-   sudo usermod -a -G dialout $USER
    
    # Check current permissions
    ls -la /dev/tty.usbserial-*
    ```
 
-4. **Install Drivers** (if needed):
-   - **CH34x Driver**: For G1 glasses USB-serial chip
-   - **FTDI Driver**: Alternative USB-serial chips
-
 </details>
 
-### App Permissions (macOS)
-
-If you get "Operation not permitted" errors, the app includes the necessary entitlements for serial port access. If issues persist:
-
-1. Grant terminal/app access in **System Preferences > Security & Privacy > Privacy > Developer Tools**
-2. Try running with elevated permissions (testing only):
-   ```bash
-   sudo flutter run -d macos
-   ```
 
 ### No Data Received
 
@@ -196,11 +226,28 @@ WLC State: WLC_STATE_STATIC (4)                # NFC charging state
 - **Serial Settings**: 115200 baud, 8N1, no flow control
 - **Connection**: USB-C cable to charging case
 
-## 🚧 Known Issues
+## 🚧 Known Issues & Limitations
 
-- **macOS**: Requires proper entitlements for serial port access (included)
-- **Resource Busy**: Ensure no other apps (like `screen`) are using the serial port
-- **Multiple Devices**: Currently optimized for single device, multi-device support is implemented but may need refinement
+### ALPHA Status Limitations
+- **⚠️ Platform Support**: Only thoroughly tested on **macOS Big Sur/Monterey/Ventura**
+- **🧪 Windows/Linux**: Experimental support - may have connection issues
+- **📱 Mobile**: iOS/Android support implemented but untested
+- **🔗 Multi-Device**: Multi-device architecture ready but needs testing with multiple glasses
+
+### Current Issues
+- **macOS**: Requires proper entitlements for serial port access (✅ included)
+- **Resource Busy**: Ensure no other apps (like `screen`) are using the serial port  
+- **Port Detection**: May need manual port specification on some systems
+- **Reconnection**: Auto-reconnection logic may be aggressive on some platforms
+
+### Help Us Test!
+We need testers on:
+- [ ] **Windows 10/11** with G1 glasses
+- [ ] **Linux** (Ubuntu, Fedora, etc.) with G1 glasses  
+- [ ] **Multiple G1 devices** simultaneously
+- [ ] **Different G1 hardware revisions**
+
+Please report your testing results in [GitHub Issues](https://github.com/yourusername/SerialLens/issues)!
 
 ## 🗺️ Roadmap
 
