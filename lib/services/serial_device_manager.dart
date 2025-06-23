@@ -48,16 +48,6 @@ class SerialDeviceManager {
         g1Ports.add(portName);
       }
     }
-    
-    // Prefer tty.usbserial over cu.usbserial for macOS
-    g1Ports.sort((a, b) {
-      if (a.contains('/dev/tty.usbserial') && b.contains('/dev/cu.usbserial')) {
-        return -1; // a comes first
-      } else if (a.contains('/dev/cu.usbserial') && b.contains('/dev/tty.usbserial')) {
-        return 1; // b comes first
-      }
-      return a.compareTo(b);
-    });
 
     // Remove devices that are no longer available
     final removedPorts = _devices.keys.where((port) => !g1Ports.contains(port)).toList();
@@ -76,12 +66,12 @@ class SerialDeviceManager {
   }
 
   bool _isLikelyG1Port(String portName) {
-    // macOS: prefer /dev/tty.usbserial-* over /dev/cu.usbserial-*
+    // macOS: /dev/tty.usbserial-* (callin devices for incoming data)
     // Linux: /dev/ttyUSB* or /dev/ttyACM*
     // Windows: COM*
+    // Note: We avoid cu.* devices as they are for outgoing calls, not monitoring incoming data
     if (Platform.isMacOS) {
-      return portName.startsWith('/dev/tty.usbserial') || 
-             portName.startsWith('/dev/cu.usbserial');
+      return portName.startsWith('/dev/tty.usbserial');
     } else if (Platform.isLinux) {
       return portName.startsWith('/dev/ttyUSB') || portName.startsWith('/dev/ttyACM');
     } else if (Platform.isWindows) {

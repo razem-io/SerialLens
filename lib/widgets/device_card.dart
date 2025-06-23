@@ -135,7 +135,48 @@ class DeviceCard extends StatelessWidget {
   }
 
   Widget _buildBatteryIndicator(String label, int? percentage, Color color) {
-    final percent = percentage ?? 0;
+    const double totalHeight = 60.0;
+    const double borderWidth = 2.0;
+    const double borderRadius = 2.0;
+    
+    // Show checking state if no data available
+    if (percentage == null) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+        child: Column(
+          children: [
+            Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+            const SizedBox(height: 4),
+            SizedBox(
+              height: totalHeight,
+              width: 30,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Outer container (border)
+                  Container(
+                    width: 30,
+                    height: totalHeight,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey, width: borderWidth),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  // Checking indicator
+                  const Text(
+                    '?',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final percent = percentage;
+    
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4.0),
       child: Column(
@@ -143,35 +184,48 @@ class DeviceCard extends StatelessWidget {
           Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
           const SizedBox(height: 4),
           SizedBox(
-            height: 60,
+            height: totalHeight,
             width: 30,
             child: Stack(
-              alignment: Alignment.bottomCenter,
               children: [
+                // Outer container (border)
                 Container(
                   width: 30,
-                  height: 60,
+                  height: totalHeight,
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey, width: 2),
+                    border: Border.all(color: Colors.grey, width: borderWidth),
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
-                Container(
-                  width: 26,
-                  height: (56 * percent / 100).clamp(0, 56),
-                  decoration: BoxDecoration(
-                    color: _getBatteryColor(percent),
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(2),
-                      bottomRight: Radius.circular(2),
+                // Inner fill - positioned from bottom
+                Positioned(
+                  bottom: borderWidth,
+                  left: borderWidth,
+                  right: borderWidth,
+                  child: Container(
+                    height: percent >= 100 
+                        ? totalHeight - (borderWidth * 2) // Fill completely for 100%
+                        : ((totalHeight - (borderWidth * 2)) * percent / 100).clamp(0.0, totalHeight - (borderWidth * 2)),
+                    decoration: BoxDecoration(
+                      color: _getBatteryColor(percent),
+                      borderRadius: percent >= 100 
+                          ? BorderRadius.circular(borderRadius)
+                          : BorderRadius.only(
+                              bottomLeft: Radius.circular(borderRadius),
+                              bottomRight: Radius.circular(borderRadius),
+                            ),
                     ),
                   ),
                 ),
+                // Percentage text
                 Positioned(
                   top: 4,
+                  left: 0,
+                  right: 0,
                   child: Text(
                     '${percent}%',
                     style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ],
@@ -235,9 +289,7 @@ class DeviceCard extends StatelessWidget {
             Expanded(
               child: _buildStatusTile('Lid', device.lidClosed == true ? 'Closed' : 'Open', Icons.laptop),
             ),
-            Expanded(
-              child: _buildInfoTile('NFC State', device.nfcState ?? 'Unknown', Icons.nfc),
-            ),
+            // Removed NFC State as it changes too rapidly and creates visual noise
           ],
         ),
       ],

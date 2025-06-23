@@ -282,9 +282,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/yourusername/SerialLens/issues)
-- 💬 **Discussions**: [GitHub Discussions](https://github.com/yourusername/SerialLens/discussions)
-- 📧 **Email**: support@seriallens.dev
+- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/razem-io/SerialLens/issues)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/razem-io/SerialLens/discussions)
+- 📧 **Email**: julian@pieles.digital
 
 ---
 
@@ -292,6 +292,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Made with ❤️ for the G1 community**
 
-[⭐ Star this repo](https://github.com/yourusername/SerialLens) if you find it useful!
+[⭐ Star this repo](https://github.com/razem-io/SerialLens) if you find it useful!
 
 </div>

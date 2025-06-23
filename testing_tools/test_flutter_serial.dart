@@ -74,7 +74,7 @@ class _SerialTestScreenState extends State<SerialTestScreen> {
         }
       }
       
-      // Prefer tty.usbserial over cu.usbserial for macOS
+      // Use tty.usbserial devices for incoming data monitoring (not cu.* callout devices)
       if (g1Candidates.isNotEmpty && _selectedPort == null) {
         String? preferredPort;
         
@@ -102,7 +102,8 @@ class _SerialTestScreenState extends State<SerialTestScreen> {
 
   bool _isLikelyG1Port(String portName) {
     // Check port name pattern for G1 glasses
-    if (portName.startsWith('/dev/tty.usbserial') || portName.startsWith('/dev/cu.usbserial')) {
+    // Use tty.* devices for incoming data monitoring (not cu.* callout devices)
+    if (portName.startsWith('/dev/tty.usbserial')) {
       return true;
     }
     
