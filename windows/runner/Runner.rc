@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "serial_lens" "\0"
+            VALUE "FileDescription", "Serial Lens" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "serial_lens" "\0"
+            VALUE "InternalName", "Serial Lens" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
             VALUE "OriginalFilename", "serial_lens.exe" "\0"
-            VALUE "ProductName", "serial_lens" "\0"
+            VALUE "ProductName", "Serial Lens" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

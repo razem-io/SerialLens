@@ -1,4 +1,4 @@
-# SerialLens - Even Realities G1 Glasses Monitor
+# Serial Lens - Even Realities G1 Glasses Monitor
 
 <div align="center">
 
@@ -89,7 +89,7 @@ A cross-platform Flutter application for monitoring multiple Even Realities G1 s
 
 ## 🔍 Manual Testing (Without App)
 
-Before using SerialLens, you can manually verify your G1 glasses are sending data:
+Before using Serial Lens, you can manually verify your G1 glasses are sending data:
 
 ### Monitor G1 Data in Terminal
 
@@ -138,7 +138,7 @@ ls -la /dev/tty.usbserial-*
 # Should show: crw-rw-rw- (readable/writable by all)
 ```
 
-If you see data flowing in the terminal, SerialLens should work perfectly!
+If you see data flowing in the terminal, Serial Lens should work perfectly!
 
 ## 🐛 Troubleshooting
 
@@ -174,7 +174,7 @@ If you see data flowing in the terminal, SerialLens should work perfectly!
 
 ## 🧪 Testing Tools
 
-SerialLens includes comprehensive testing tools for debugging connection issues:
+Serial Lens includes comprehensive testing tools for debugging connection issues:
 
 ### Basic Connection Test
 ```bash

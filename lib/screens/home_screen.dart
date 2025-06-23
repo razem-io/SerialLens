@@ -27,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Column(
           children: [
-            const Text('SerialLens'),
+            const Text('Serial Lens'),
             Consumer<DeviceProvider>(
               builder: (context, provider, child) {
                 return Text(
@@ -182,12 +182,12 @@ class _HomeScreenState extends State<HomeScreen> {
   void _showAboutDialog() {
     showAboutDialog(
       context: context,
-      applicationName: 'SerialLens',
+      applicationName: 'Serial Lens',
       applicationVersion: '1.0.0',
       applicationIcon: const Icon(Icons.smart_display, size: 48),
       children: [
         const Text(
-          'SerialLens is a cross-platform monitoring application for Even Realities G1 smart AR glasses. '
+          'Serial Lens is a cross-platform monitoring application for Even Realities G1 smart AR glasses. '
           'It provides real-time information about battery levels, charging status, and device health.',
         ),
         const SizedBox(height: 16),

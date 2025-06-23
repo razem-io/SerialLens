@@ -15,7 +15,7 @@ class SerialLensApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => DeviceProvider(),
       child: MaterialApp(
-        title: 'SerialLens - G1 Glasses Monitor',
+        title: 'Serial Lens - G1 Glasses Monitor',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
