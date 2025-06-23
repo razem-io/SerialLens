@@ -108,6 +108,9 @@ class DeviceCard extends StatelessWidget {
   }
 
   Widget _buildBatterySection() {
+    final bool showGlassBatteryHint = device.lidClosed == true && 
+        (device.leftGlassBattery == null || device.rightGlassBattery == null);
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -123,6 +126,33 @@ class DeviceCard extends StatelessWidget {
             Expanded(child: _buildBatteryIndicator('Right', device.rightGlassBattery, Colors.orange)),
           ],
         ),
+        if (showGlassBatteryHint) ...[
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.amber[50],
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(color: Colors.amber[200]!),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.info_outline, size: 16, color: Colors.amber[700]),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Open the case lid to see glasses battery levels',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.amber[700],
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
         if (device.caseBatteryVoltage != null) ...[
           const SizedBox(height: 8),
           Text(
